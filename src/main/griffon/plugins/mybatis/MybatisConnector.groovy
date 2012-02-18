@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2011-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,30 +31,15 @@ import griffon.plugins.datasource.DataSourceConnector
  * @author Andres Almiray
  */
 @Singleton
-final class MybatisConnector {
+final class MybatisConnector implements SqlSessionProvider {
     private final Set<Class> mappers = [] as LinkedHashSet
     private bootstrap
-
-    static void enhance(MetaClass mc) {
-        mc.withSqlSession = {Closure closure ->
-            SqlSessionFactoryHolder.instance.withSqlSession('default', closure)   
-        }
-        mc.withSqlSession << {String sessionFactoryName, Closure closure ->
-            SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, closure)   
-        }
-        mc.withSqlSession << {CallableWithArgs callable ->
-            SqlSessionFactoryHolder.instance.withSqlSession('default', callable)   
-        }
-        mc.withSqlSession << {String sessionFactoryName, CallableWithArgs callable ->
-            SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, callable)   
-        }       
-    }
 
     Object withSqlSession(String sessionFactoryName = 'default', Closure closure) {
         SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, closure) 
     }
 
-    Object withSqlSession(String sessionFactoryName = 'default', CallableWithArgs callable) {
+    public <T> T withSqlSession(String sessionFactoryName = 'default', CallableWithArgs<T> callable) {
         SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, callable) 
     }
 

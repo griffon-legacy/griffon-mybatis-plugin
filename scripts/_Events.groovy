@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2011-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,6 @@
 /**
  * @author Andres Almiray
  */
- 
-def eventClosure1 = binding.variables.containsKey('eventSetClasspath') ? eventSetClasspath : {cl->}
-eventSetClasspath = { cl ->
-    eventClosure1(cl)
-    if(compilingPlugin('mybatis')) return
-    griffonSettings.dependencyManager.flatDirResolver name: 'griffon-mybatis-plugin', dirs: "${mybatisPluginDir}/addon"
-    griffonSettings.dependencyManager.addPluginDependency('mybatis', [
-        conf: 'compile',
-        name: 'griffon-mybatis-addon',
-        group: 'org.codehaus.griffon.plugins',
-        version: mybatisPluginVersion
-    ])
-}
 
 eventCompileSourcesStart = {
     if(compilingPlugin('mybatis')) return
@@ -37,7 +24,7 @@ eventCompileSourcesStart = {
 
 eventCompileSourcesEnd = {
     if(compilingPlugin('mybatis')) return
-    ant.copy(todir: classesDirPath) {
+    ant.copy(todir: projectMainClassesDir) {
         fileset(dir: "${basedir}/src/mybatis") {
             include(name: '**/*.xml')
         }

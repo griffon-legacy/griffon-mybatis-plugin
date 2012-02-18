@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2011-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory
  * @author Andres Almiray
  */
 @Singleton
-class SqlSessionFactoryHolder {
+class SqlSessionFactoryHolder implements SqlSessionProvider {
     private static final Log LOG = LogFactory.getLog(SqlSessionFactoryHolder)
     private static final Object[] LOCK = new Object[0]
     private final Map<String, SqlSessionFactory> sessionFactories = [:]
@@ -62,7 +62,7 @@ class SqlSessionFactoryHolder {
         }
     }
 
-    Object withSqlSession(String sessionFactoryName = 'default', CallableWithArgs callable) {
+    public <T> T withSqlSession(String sessionFactoryName = 'default', CallableWithArgs<T> callable) {
         SqlSessionFactory sf = fetchSqlSessionFactory(sessionFactoryName)
         if(LOG.debugEnabled) LOG.debug("Executing SQL stament on sqlSession '$sessionFactoryName'")
         SqlSession session = sf.openSession(true)
