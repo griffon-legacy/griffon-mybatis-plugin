@@ -16,14 +16,19 @@
 package griffon.plugins.mybatis
 
 import griffon.util.CallableWithArgs
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * @author Andres Almiray
  */
 final class MybatisEnhancer {
+    private static final Logger LOG = LoggerFactory.getLogger(MybatisEnhancer)
+
     private MybatisEnhancer() {}
     
     static void enhance(MetaClass mc, SqlSessionProvider provider = SqlSessionFactoryHolder.instance) {
+        if(LOG.debugEnabled) LOG.debug("Enhancing $mc with $provider")
         mc.withSqlSession = {Closure closure ->
             provider.withSqlSession('default', closure)
         }

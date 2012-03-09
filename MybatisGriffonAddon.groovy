@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import griffon.core.GriffonClass
 import griffon.core.GriffonApplication
 import griffon.plugins.mybatis.MybatisConnector
 import griffon.plugins.mybatis.MybatisEnhancer
@@ -26,15 +27,18 @@ class MybatisGriffonAddon {
         MybatisConnector.instance.connect(app)
     }
 
+    void addonPostInit(GriffonApplication app) {
+        def types = app.config.griffon?.mybatis?.injectInto ?: ['controller']
+        for(String type : types) {
+            for(GriffonClass gc : app.artifactManager.getClassesOfType(type)) {
+                MybatisEnhancer.enhance(gc.metaClass)
+            }
+        }
+    }
+
     def events = [
         ShutdownStart: { app ->
             MybatisConnector.instance.disconnect(app)
-        },
-        NewInstance: { klass, type, instance ->
-            def types = app.config.griffon?.mybatis?.injectInto ?: ['controller']
-            if(!types.contains(type)) return
-            MetaClass mc = app.artifactManager.findGriffonClass(klass).metaClass
-            MybatisEnhancer.enhance(mc)
         }
     ]
 }

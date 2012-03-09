@@ -21,8 +21,6 @@ includeTargets << griffonScript('_GriffonCreateArtifacts')
 
 target(name: 'createMybatisClass', description: 'Creates a new Mybatis class',
     prehook: null, posthook: null) {
-    depends(checkVersion, parseArguments)
-
     ant.mkdir(dir: "${basedir}/src/mybatis")
 
     def type = 'MybatisClass'

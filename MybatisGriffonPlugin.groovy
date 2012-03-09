@@ -128,9 +128,9 @@ Testing
 -------
 The `withSqlSession()` dynamic method will not be automatically injected during unit testing, because addons are simply not initialized
 for this kind of tests. However you can use `MybatisEnhancer.enhance(metaClassInstance, mybatisProviderInstance)` where 
-`mybatisProviderInstance` is of type `griffon.plugins.mybatis.MybatisProvider`. The contract for this interface looks like this
+`mybatisProviderInstance` is of type `griffon.plugins.mybatis.SqlSessionProvider`. The contract for this interface looks like this
 
-    public interface MybatisProvider {
+    public interface SqlSessionProvider {
         Object withSqlSession(Closure closure);
         Object withSqlSession(String sessionFactoryName, Closure closure);
         <T> T withSqlSession(CallableWithArgs<T> callable);
@@ -140,7 +140,7 @@ for this kind of tests. However you can use `MybatisEnhancer.enhance(metaClassIn
 It's up to you define how these methods need to be implemented for your tests. For example, here's an implementation that never
 fails regardless of the arguments it receives
 
-    class MyMybatisProvider implements MybatisProvider {
+    class MySqlSessionProvider implements SqlSessionProvider {
         Object withSqlSession(String sessionFactoryName = 'default', Closure closure) { null }
         public <T> T withSqlSession(String sessionFactoryName = 'default', CallableWithArgs<T> callable) { null }      
     }
@@ -150,7 +150,7 @@ This implementation may be used in the following way
     class MyServiceTests extends GriffonUnitTestCase {
         void testSmokeAndMirrors() {
             MyService service = new MyService()
-            MybatisEnhancer.enhance(service.metaClass, new MyMybatisProvider())
+            MybatisEnhancer.enhance(service.metaClass, new MySqlSessionProvider())
             // exercise service methods
         }
     }
