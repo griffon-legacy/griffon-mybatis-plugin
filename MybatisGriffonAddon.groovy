@@ -36,7 +36,7 @@ class MybatisGriffonAddon {
         }
     }
 
-    def events = [
+    Map events = [
         ShutdownStart: { app ->
             MybatisConnector.instance.disconnect(app)
         }

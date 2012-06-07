@@ -18,9 +18,9 @@
  */
 class MybatisGriffonPlugin {
     // the plugin version
-    String version = '0.3'
+    String version = '0.4'
     // the version or versions of Griffon the plugin is designed for
-    String griffonVersion = '0.9.5 > *'
+    String griffonVersion = '1.0.0 > *'
     // the other plugins this plugin depends on
     Map dependsOn = [datasource: '0.3']
     // resources that are included in plugin packaging
