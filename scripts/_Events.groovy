@@ -19,7 +19,8 @@
 
 eventCompileSourcesStart = {
     if(compilingPlugin('mybatis')) return
-    additionalSources << "${basedir}/src/mybatis"
+    if(!buildConfig.griffon.compiler.additional.sources) buildConfig.griffon.compiler.additional.sources = []
+    buildConfig.griffon.compiler.additional.sources << "${basedir}/src/mybatis"
 }
 
 eventCompileSourcesEnd = {
