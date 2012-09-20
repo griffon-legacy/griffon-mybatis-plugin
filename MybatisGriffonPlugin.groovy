@@ -18,11 +18,11 @@
  */
 class MybatisGriffonPlugin {
     // the plugin version
-    String version = '0.5'
+    String version = '0.6'
     // the version or versions of Griffon the plugin is designed for
-    String griffonVersion = '1.0.2 > *'
+    String griffonVersion = '1.1.0 > *'
     // the other plugins this plugin depends on
-    Map dependsOn = [datasource: '0.3']
+    Map dependsOn = [datasource: '0.4']
     // resources that are included in plugin packaging
     List pluginIncludes = []
     // the plugin license
@@ -64,19 +64,20 @@ giving you access to a `org.apache.ibatis.session.SqlSession` object, with which
 to make calls to the database. Remember to make all database calls off the EDT
 otherwise your application may appear unresponsive when doing long computations
 inside the EDT.
+
 This method is aware of multiple databases. If no databaseName is specified when calling
 it then the default database will be selected. Here are two example usages, the first
 queries against the default database while the second queries a database whose name has
 been configured as 'internal'
 
-	package sample
-	class SampleController {
-	    def queryAllDatabases = {
-	        withSqlSession { sessionFactoryName, sqlSession -> ... }
-	        withSqlSession('internal') { sessionFactoryName, sqlSession -> ... }
-	    }
-	}
-	
+    package sample
+    class SampleController {
+        def queryAllDatabases = {
+            withSqlSession { sessionFactoryName, sqlSession -> ... }
+            withSqlSession('internal') { sessionFactoryName, sqlSession -> ... }
+        }
+    }
+    
 This method is also accessible to any component through the singleton `griffon.plugins.mybatis.MybatisConnector`.
 You can inject these methods to non-artifacts via metaclasses. Simply grab hold of a particular metaclass and call
 `MybatisEnhancer.enhance(metaClassInstance, mybatisProviderInstance)`.
@@ -142,9 +143,9 @@ fails regardless of the arguments it receives
 
     class MySqlSessionProvider implements SqlSessionProvider {
         Object withSqlSession(String sessionFactoryName = 'default', Closure closure) { null }
-        public <T> T withSqlSession(String sessionFactoryName = 'default', CallableWithArgs<T> callable) { null }      
+        public <T> T withSqlSession(String sessionFactoryName = 'default', CallableWithArgs<T> callable) { null }
     }
-    
+
 This implementation may be used in the following way
 
     class MyServiceTests extends GriffonUnitTestCase {

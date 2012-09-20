@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package griffon.plugins.mybatis
 
 import griffon.util.CallableWithArgs
@@ -26,7 +27,7 @@ final class MybatisEnhancer {
     private static final Logger LOG = LoggerFactory.getLogger(MybatisEnhancer)
 
     private MybatisEnhancer() {}
-    
+
     static void enhance(MetaClass mc, SqlSessionProvider provider = SqlSessionFactoryHolder.instance) {
         if(LOG.debugEnabled) LOG.debug("Enhancing $mc with $provider")
         mc.withSqlSession = {Closure closure ->

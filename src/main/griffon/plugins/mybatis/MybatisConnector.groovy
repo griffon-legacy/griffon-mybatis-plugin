@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package griffon.plugins.mybatis
 
 import javax.sql.DataSource
@@ -24,6 +25,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 
 import griffon.core.GriffonApplication
 import griffon.util.CallableWithArgs
+import griffon.util.ConfigUtils
 import griffon.plugins.datasource.DataSourceHolder
 import griffon.plugins.datasource.DataSourceConnector
 
@@ -36,21 +38,20 @@ final class MybatisConnector implements SqlSessionProvider {
     private bootstrap
 
     Object withSqlSession(String sessionFactoryName = 'default', Closure closure) {
-        SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, closure) 
+        SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, closure)
     }
 
     public <T> T withSqlSession(String sessionFactoryName = 'default', CallableWithArgs<T> callable) {
-        SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, callable) 
+        SqlSessionFactoryHolder.instance.withSqlSession(sessionFactoryName, callable)
     }
 
     // ======================================================
 
     ConfigObject createConfig(GriffonApplication app) {
-        def configClass = app.class.classLoader.loadClass('MybatisConfig')
-        new ConfigSlurper(griffon.util.Environment.current.name).parse(configClass) 
-    }   
-    
-    private ConfigObject narrowConfig(ConfigObject config, String dataSourceName) {   
+        ConfigUtils.loadConfigWithI18n('MybatisConfig')
+    }
+
+    private ConfigObject narrowConfig(ConfigObject config, String dataSourceName) {
         return dataSourceName == 'default' ? config.sessionFactory : config.sessionFactories[dataSourceName]
     }
 
@@ -58,7 +59,7 @@ final class MybatisConnector implements SqlSessionProvider {
         if(SqlSessionFactoryHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) {
             return SqlSessionFactoryHolder.instance.getSqlSessionFactory(dataSourceName)
         }
-        
+
         ConfigObject config = DataSourceConnector.instance.createConfig(app)
         DataSource dataSource = DataSourceConnector.instance.connect(app, config, dataSourceName)
 
@@ -75,7 +76,7 @@ final class MybatisConnector implements SqlSessionProvider {
 
     void disconnect(GriffonApplication app, String dataSourceName = 'default') {
         if(!SqlSessionFactoryHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) return
-        
+
         SqlSessionFactory sessionFactory = SqlSessionFactoryHolder.instance.getSqlSessionFactory(dataSourceName)
         app.event('MybatisDisconnectStart', [dataSourceName, sessionFactory])
         SqlSessionFactoryHolder.instance.withSqlSession(dataSourceName) { dsName, sqlSession -> bootstrap.destroy(dsName, sqlSession) }
@@ -96,7 +97,7 @@ final class MybatisConnector implements SqlSessionProvider {
             readMappers()
         }
         mappers.each { Class mapper -> configuration.addMapper(mapper) }
-        
+
         new SqlSessionFactoryBuilder().build(configuration)
     }
 

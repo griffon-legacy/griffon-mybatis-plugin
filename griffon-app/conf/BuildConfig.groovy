@@ -6,7 +6,7 @@ griffon.project.dependency.resolution = {
         mavenCentral()
     }
     dependencies {
-        compile( 'org.mybatis:mybatis:3.0.5') {
+        compile( 'org.mybatis:mybatis:3.1.1') {
             exclude 'commons-logging'
         }
     }

@@ -48,7 +48,7 @@ class SqlSessionFactoryHolder implements SqlSessionProvider {
 
     void setSqlSessionFactory(String sessionFactoryName = 'default', SqlSessionFactory sf) {
         if(isBlank(sessionFactoryName)) sessionFactoryName = 'default'
-        storeSqlSessionFactory(sessionFactoryName, sf)       
+        storeSqlSessionFactory(sessionFactoryName, sf)
     }
 
     Object withSqlSession(String sessionFactoryName = 'default', Closure closure) {
@@ -72,15 +72,15 @@ class SqlSessionFactoryHolder implements SqlSessionProvider {
             session.close()
         }
     }
-    
+
     boolean isSqlSessionFactoryAvailable(String sessionFactoryName) {
         if(isBlank(sessionFactoryName)) sessionFactoryName = 'default'
         retrieveSqlSessionFactory(sessionFactoryName) != null
     }
-    
+
     void disconnectSqlSessionFactory(String sessionFactoryName) {
         if(isBlank(sessionFactoryName)) sessionFactoryName = 'default'
-        storeSqlSessionFactory(sessionFactoryName, null)        
+        storeSqlSessionFactory(sessionFactoryName, null) 
     }
 
     private SqlSessionFactory fetchSqlSessionFactory(String sessionFactoryName) {
