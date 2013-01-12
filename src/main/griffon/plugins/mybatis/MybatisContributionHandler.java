@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2012-2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,22 @@
 
 package griffon.plugins.mybatis;
 
-import groovy.lang.Closure;
 import griffon.util.CallableWithArgs;
+import groovy.lang.Closure;
 
 /**
  * @author Andres Almiray
  */
-public interface SqlSessionProvider {
-    Object withSqlSession(Closure closure);
+public interface MybatisContributionHandler {
+    void setMybatisProvider(MybatisProvider provider);
 
-    Object withSqlSession(String sessionFactoryName, Closure closure);
+    MybatisProvider getMybatisProvider();
 
-    <T> T withSqlSession(CallableWithArgs<T> callable);
+    <R> R withSqlSession(Closure<R> closure);
 
-    <T> T withSqlSession(String sessionFactoryName, CallableWithArgs<T> callable);
+    <R> R withSqlSession(String sessionFactoryName, Closure<R> closure);
+
+    <R> R withSqlSession(CallableWithArgs<R> callable);
+
+    <R> R withSqlSession(String sessionFactoryName, CallableWithArgs<R> callable);
 }
