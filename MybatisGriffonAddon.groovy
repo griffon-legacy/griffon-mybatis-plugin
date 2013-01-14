@@ -24,11 +24,8 @@ import griffon.plugins.mybatis.MybatisContributionHandler
  * @author Andres Almiray
  */
 class MybatisGriffonAddon {
-    void addonInit(GriffonApplication app) {
-        MybatisConnector.instance.connect(app)
-    }
-
     void addonPostInit(GriffonApplication app) {
+        MybatisConnector.instance.connect(app)
         def types = app.config.griffon?.mybatis?.injectInto ?: ['controller']
         for(String type : types) {
             for(GriffonClass gc : app.artifactManager.getClassesOfType(type)) {

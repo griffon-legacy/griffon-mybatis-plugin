@@ -38,7 +38,10 @@ final class MybatisConnector {
     private bootstrap
 
     ConfigObject createConfig(GriffonApplication app) {
-        ConfigUtils.loadConfigWithI18n('MybatisConfig')
+        if (!app.config.pluginConfig.mybatis) {
+            app.config.pluginConfig.mybatis = ConfigUtils.loadConfigWithI18n('MybatisConfig')
+        }
+        app.config.pluginConfig.mybatis
     }
 
     private ConfigObject narrowConfig(ConfigObject config, String dataSourceName) {
@@ -46,7 +49,7 @@ final class MybatisConnector {
     }
 
     SqlSessionFactory connect(GriffonApplication app, String dataSourceName = DEFAULT) {
-        if(MybatisHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) {
+        if (MybatisHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) {
             return MybatisHolder.instance.getSqlSessionFactory(dataSourceName)
         }
 
@@ -65,7 +68,7 @@ final class MybatisConnector {
     }
 
     void disconnect(GriffonApplication app, String dataSourceName = DEFAULT) {
-        if(!MybatisHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) return
+        if (!MybatisHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) return
 
         SqlSessionFactory sessionFactory = MybatisHolder.instance.getSqlSessionFactory(dataSourceName)
         app.event('MybatisDisconnectStart', [dataSourceName, sessionFactory])
@@ -95,7 +98,7 @@ final class MybatisConnector {
         config.each { propName, propValue ->
             configuration[propName] = propValue
         }
-        if(mappers.isEmpty()) {
+        if (mappers.isEmpty()) {
             readMappers()
         }
         mappers.each { Class mapper -> configuration.addMapper(mapper) }
