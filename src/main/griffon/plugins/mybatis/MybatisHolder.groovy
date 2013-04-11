@@ -46,35 +46,35 @@ class MybatisHolder {
     }
 
     SqlSessionFactory getSqlSessionFactory(String sessionFactoryName = DEFAULT) {
-        if(isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
+        if (isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
         retrieveSqlSessionFactory(sessionFactoryName)
     }
 
     void setSqlSessionFactory(String sessionFactoryName = DEFAULT, SqlSessionFactory sf) {
-        if(isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
+        if (isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
         storeSqlSessionFactory(sessionFactoryName, sf)
     }
 
     boolean isSqlSessionFactoryAvailable(String sessionFactoryName) {
-        if(isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
+        if (isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
         retrieveSqlSessionFactory(sessionFactoryName) != null
     }
 
     void disconnectSqlSessionFactory(String sessionFactoryName) {
-        if(isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
+        if (isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
         storeSqlSessionFactory(sessionFactoryName, null) 
     }
 
     SqlSessionFactory fetchSqlSessionFactory(String sessionFactoryName) {
-        if(isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
+        if (isBlank(sessionFactoryName)) sessionFactoryName = DEFAULT
         SqlSessionFactory sf = retrieveSqlSessionFactory(sessionFactoryName)
-        if(sf == null) {
+        if (sf == null) {
             GriffonApplication app = ApplicationHolder.application
             ConfigObject config = MybatisConnector.instance.createConfig(app)
             sf = MybatisConnector.instance.connect(app, config, sessionFactoryName)
         }
 
-        if(sf == null) {
+        if (sf == null) {
             throw new IllegalArgumentException("No such SqlSessionFactory configuration for name $sessionFactoryName")
         }
         sf

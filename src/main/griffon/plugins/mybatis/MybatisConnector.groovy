@@ -45,18 +45,23 @@ final class MybatisConnector {
     }
 
     private ConfigObject narrowConfig(ConfigObject config, String dataSourceName) {
-        return dataSourceName == DEFAULT ? config.sessionFactory : config.sessionFactories[dataSourceName]
+        if (config.containsKey('sessionFactory') && dataSourceName == DEFAULT) {
+            return config.sessionFactory
+        } else if (config.containsKey('sessionFactories')) {
+            return config.sessionFactories[dataSourceName]
+        }
+        return config
     }
 
-    SqlSessionFactory connect(GriffonApplication app, String dataSourceName = DEFAULT) {
+    SqlSessionFactory connect(GriffonApplication app, ConfigObject config, String dataSourceName = DEFAULT) {
         if (MybatisHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) {
             return MybatisHolder.instance.getSqlSessionFactory(dataSourceName)
         }
 
-        ConfigObject config = DataSourceConnector.instance.createConfig(app)
-        DataSource dataSource = DataSourceConnector.instance.connect(app, config, dataSourceName)
+        ConfigObject dsconfig = DataSourceConnector.instance.createConfig(app)
+        DataSourceConnector.instance.connect(app, dsconfig, dataSourceName)
 
-        config = narrowConfig(createConfig(app), dataSourceName)
+        config = narrowConfig(config, dataSourceName)
         app.event('MybatisConnectStart', [config, dataSourceName])
         SqlSessionFactory sessionFactory = createSqlSessionFactory(config, dataSourceName)
         MybatisHolder.instance.setSqlSessionFactory(dataSourceName, sessionFactory)
@@ -67,7 +72,7 @@ final class MybatisConnector {
         sessionFactory
     }
 
-    void disconnect(GriffonApplication app, String dataSourceName = DEFAULT) {
+    void disconnect(GriffonApplication app, ConfigObject config, String dataSourceName = DEFAULT) {
         if (!MybatisHolder.instance.isSqlSessionFactoryAvailable(dataSourceName)) return
 
         SqlSessionFactory sessionFactory = MybatisHolder.instance.getSqlSessionFactory(dataSourceName)
@@ -75,8 +80,8 @@ final class MybatisConnector {
         resolveMybatisProvider(app).withSqlSession(dataSourceName) { dsName, sqlSession -> bootstrap.destroy(dsName, sqlSession) }
         MybatisHolder.instance.disconnectSqlSessionFactory(dataSourceName)
         app.event('MybatisDisconnectEnd', [dataSourceName])
-        ConfigObject config = DataSourceConnector.instance.createConfig(app)
-        DataSourceConnector.instance.disconnect(app, config, dataSourceName)
+        ConfigObject dsconfig = DataSourceConnector.instance.createConfig(app)
+        DataSourceConnector.instance.disconnect(app, dsconfig, dataSourceName)
     }
 
     MybatisProvider resolveMybatisProvider(GriffonApplication app) {

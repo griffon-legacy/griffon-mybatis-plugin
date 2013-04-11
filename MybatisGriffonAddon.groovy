@@ -20,12 +20,17 @@ import griffon.plugins.mybatis.MybatisConnector
 import griffon.plugins.mybatis.MybatisEnhancer
 import griffon.plugins.mybatis.MybatisContributionHandler
 
+import static griffon.util.ConfigUtils.getConfigValueAsBoolean
+
 /**
  * @author Andres Almiray
  */
 class MybatisGriffonAddon {
     void addonPostInit(GriffonApplication app) {
-        MybatisConnector.instance.connect(app)
+        ConfigObject config = MybatisConnector.instance.createConfig(app)
+        if (getConfigValueAsBoolean(app.config, 'griffon.mybatis.connect.onstartup', true)) {
+            MybatisConnector.instance.connect(app, config)
+        }
         def types = app.config.griffon?.mybatis?.injectInto ?: ['controller']
         for(String type : types) {
             for(GriffonClass gc : app.artifactManager.getClassesOfType(type)) {
@@ -37,7 +42,8 @@ class MybatisGriffonAddon {
 
     Map events = [
         ShutdownStart: { app ->
-            MybatisConnector.instance.disconnect(app)
+            ConfigObject config = MybatisConnector.instance.createConfig(app)
+            MybatisConnector.instance.disconnect(app, config)
         }
     ]
 }

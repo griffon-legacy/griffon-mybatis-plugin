@@ -30,7 +30,7 @@ final class MybatisEnhancer {
     private MybatisEnhancer() {}
     
     static void enhance(MetaClass mc, MybatisProvider provider = DefaultMybatisProvider.instance) {
-        if(LOG.debugEnabled) LOG.debug("Enhancing $mc with $provider")
+        if (LOG.debugEnabled) LOG.debug("Enhancing $mc with $provider")
         mc.withSqlSession = {Closure closure ->
             provider.withSqlSession(DEFAULT, closure)
         }
