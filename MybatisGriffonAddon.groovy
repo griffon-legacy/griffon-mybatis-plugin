@@ -27,13 +27,10 @@ import static griffon.util.ConfigUtils.getConfigValueAsBoolean
  */
 class MybatisGriffonAddon {
     void addonPostInit(GriffonApplication app) {
-        ConfigObject config = MybatisConnector.instance.createConfig(app)
-        if (getConfigValueAsBoolean(app.config, 'griffon.mybatis.connect.onstartup', true)) {
-            MybatisConnector.instance.connect(app, config)
-        }
+        MybatisConnector.instance.createConfig(app)
         def types = app.config.griffon?.mybatis?.injectInto ?: ['controller']
-        for(String type : types) {
-            for(GriffonClass gc : app.artifactManager.getClassesOfType(type)) {
+        for (String type : types) {
+            for (GriffonClass gc : app.artifactManager.getClassesOfType(type)) {
                 if (MybatisContributionHandler.isAssignableFrom(gc.clazz)) continue
                 MybatisEnhancer.enhance(gc.metaClass)
             }
@@ -41,6 +38,12 @@ class MybatisGriffonAddon {
     }
 
     Map events = [
+        LoadAddonsEnd: { app, addons ->
+            if (getConfigValueAsBoolean(app.config, 'griffon.mybatis.connect.onstartup', true)) {
+                ConfigObject config = MybatisConnector.instance.createConfig(app)
+                MybatisConnector.instance.connect(app, config)
+            }
+        },
         ShutdownStart: { app ->
             ConfigObject config = MybatisConnector.instance.createConfig(app)
             MybatisConnector.instance.disconnect(app, config)

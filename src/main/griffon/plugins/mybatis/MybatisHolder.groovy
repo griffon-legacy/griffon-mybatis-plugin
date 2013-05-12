@@ -40,6 +40,8 @@ class MybatisHolder {
         INSTANCE
     }
 
+    private MybatisHolder() {}
+
     String[] getSqlSessionFactoryNames() {
         List<String> sessionFactoryNames = new ArrayList().addAll(sessionFactories.keySet())
         sessionFactoryNames.toArray(new String[sessionFactoryNames.size()])

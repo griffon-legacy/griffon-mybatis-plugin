@@ -32,6 +32,8 @@ public class DefaultMybatisProvider extends AbstractMybatisProvider {
         return INSTANCE;
     }
 
+    private DefaultMybatisProvider() {}
+
     @Override
     protected SqlSessionFactory getSessionFactory(String sessionFactoryName) {
         return MybatisHolder.getInstance().fetchSqlSessionFactory(sessionFactoryName);
